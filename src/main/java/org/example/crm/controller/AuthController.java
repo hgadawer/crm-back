@@ -61,6 +61,8 @@ public class AuthController {
         // 5、将 token 存入 Redis，key 使用统一前缀
         //把这个token写入redis,token适合string或者hash结构进行存储，把user_id转成字符串存储
         redisTemplate.opsForHash().put(Constant.SECRET,String.valueOf(user.getId()),token);
+        //设置该token的过期时间TTL
+        redisTemplate.expire(Constant.SECRET, Constant.EXPIRATION, TimeUnit.SECONDS);
 
         // 6. 构造返回数据对象
         LoginResponse loginResponse = new LoginResponse(user.getId(), token);

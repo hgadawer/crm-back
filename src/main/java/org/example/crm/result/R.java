@@ -25,7 +25,7 @@ public class R {
     public static R OK(Object data) {
         return R.builder().code(200).msg("成功").info(data).build();
     }
-    public static R FAIL() {
-        return R.builder().code(500).msg("失败").info(null).build();
+    public static R FAIL(Object data) {
+        return R.builder().code(500).msg("失败").info(data).build();
     }
 }
