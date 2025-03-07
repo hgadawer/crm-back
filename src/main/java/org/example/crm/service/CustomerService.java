@@ -1,5 +1,6 @@
 package org.example.crm.service;
 
+import org.example.crm.DTO.CustomerIdAndName;
 import org.example.crm.entity.Customer;
 import org.springframework.data.domain.Page;
 
@@ -42,4 +43,6 @@ public interface CustomerService {
     boolean deleteCustomers(List<Long> ids);
 
     byte[] exportCustomersToExcel() throws IOException;
+
+    List<CustomerIdAndName> getAllCustomerIdsAndNames();
 }

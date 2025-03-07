@@ -3,6 +3,7 @@ package org.example.crm.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.example.crm.DTO.CustomerIdAndName;
 import org.example.crm.entity.Customer;
 
 import java.util.List;
@@ -40,4 +41,5 @@ public interface CustomerMapper {
 
     int deleteByIds(@Param("ids") List<Long> ids);
 
+    List<CustomerIdAndName> selectAllCustomerIdsAndNames();
 }

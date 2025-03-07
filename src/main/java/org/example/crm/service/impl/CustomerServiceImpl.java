@@ -1,6 +1,7 @@
 package org.example.crm.service.impl;
 
 import org.apache.poi.xssf.usermodel.*;
+import org.example.crm.DTO.CustomerIdAndName;
 import org.example.crm.entity.Customer;
 import org.example.crm.mapper.CustomerMapper;
 import org.example.crm.service.CustomerService;
@@ -119,5 +120,11 @@ public class CustomerServiceImpl implements CustomerService {
             workbook.write(out);
             return out.toByteArray();
         }
+    }
+
+    @Override
+    public List<CustomerIdAndName> getAllCustomerIdsAndNames() {
+
+        return  customerMapper.selectAllCustomerIdsAndNames();
     }
 }

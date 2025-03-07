@@ -1,10 +1,10 @@
 package org.example.crm.entity;
 
-import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,12 +40,12 @@ public class User implements UserDetails {
     /**
      * 创建时间
      */
-    private Long created;
+    private Date created;
 
     /**
      * 更新时间
      */
-    private Long updated;
+    private Date updated;
 
     /**
      * 账户是否没有过期，0已过期 1正常
@@ -91,19 +91,19 @@ public class User implements UserDetails {
         this.status = status;
     }
 
-    public Long getCreated() {
+    public Date getCreated() {
         return created;
     }
 
-    public void setCreated(Long created) {
+    public void setCreated(Date created) {
         this.created = created;
     }
 
-    public Long getUpdated() {
+    public Date getUpdated() {
         return updated;
     }
 
-    public void setUpdated(Long updated) {
+    public void setUpdated(Date updated) {
         this.updated = updated;
     }
 
@@ -140,5 +140,12 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

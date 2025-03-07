@@ -1,6 +1,7 @@
 package org.example.crm.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.example.crm.DTO.CustomerIdAndName;
 import org.example.crm.DTO.DeleteCustomerRequest;
 import org.example.crm.DTO.ExcelResponse;
 import org.example.crm.entity.Customer;
@@ -10,9 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/customer")
@@ -54,6 +53,12 @@ public class CustomerController {
         }catch (Exception e){
             return R.FAIL(e.getMessage());
         }
+    }
+
+    @GetMapping("/all")
+    public R queryAllCustomerIdsAndNames(){
+        List<CustomerIdAndName> customerIdAndNameList =  customerService.getAllCustomerIdsAndNames();
+        return R.OK(customerIdAndNameList);
     }
 
     /**
