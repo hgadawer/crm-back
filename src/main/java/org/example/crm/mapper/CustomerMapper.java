@@ -6,7 +6,9 @@ import org.apache.ibatis.annotations.Param;
 import org.example.crm.DTO.CustomerIdAndName;
 import org.example.crm.entity.Customer;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author 20839
@@ -42,4 +44,9 @@ public interface CustomerMapper {
     int deleteByIds(@Param("ids") List<Long> ids);
 
     List<CustomerIdAndName> selectAllCustomerIdsAndNames();
+
+    int countAllCustomers();
+
+
+    List<Map<String, Object>> getCustomerIndustryDistribution();
 }

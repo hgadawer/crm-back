@@ -61,6 +61,15 @@
         select id,name from customer
         where 1 = 1
     </select>
+    <select id="countAllCustomers" resultType="java.lang.Integer">
+        select count(id)
+        from customer
+    </select>
+    <select id="getCustomerIndustryDistribution" resultType="map">
+        SELECT industry AS name, COUNT(*) AS value
+        FROM customer
+        GROUP BY industry
+    </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
         delete from customer

@@ -1,8 +1,10 @@
 package org.example.crm.entity;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -47,6 +49,7 @@ public class User implements UserDetails {
      */
     private Date updated;
 
+    private List<Role> roleList;
     /**
      * 账户是否没有过期，0已过期 1正常
      */
@@ -109,7 +112,11 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        for(Role role : this.roleList){
+            authorities.add(new SimpleGrantedAuthority("ROLE_"+role.getRoleName()));
+        }
+        return authorities;
     }
 
     @Override
@@ -147,5 +154,9 @@ public class User implements UserDetails {
     }
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setRoleList(List<Role> roleList) {
+        this.roleList = roleList;
     }
 }

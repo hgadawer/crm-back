@@ -22,7 +22,7 @@ import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -59,9 +59,9 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 // 2. 设置Session为无状态，不使用HttpSession保存用户认证信息
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // 3. 配置请求授权规则：开放登录和注册接口，其余请求需要认证
+                // 3. 配置请求授权规则：开放登录、注册和验证码接口，其余请求需要认证
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register").permitAll()
+                        .requestMatchers("/login", "/register","/user/verifycode").permitAll()
                         .anyRequest().authenticated()
                 )
                 // 4. 配置异常处理：未认证、无权限时返回JSON提示

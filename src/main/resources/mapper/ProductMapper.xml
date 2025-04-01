@@ -44,6 +44,10 @@
         select * from product
         where name = #{name}
     </select>
+    <select id="countAllProducts" resultType="java.lang.Integer">
+        select count(id)
+        from product
+    </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
         delete from product
         where  id = #{id} 

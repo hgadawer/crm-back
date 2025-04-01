@@ -32,4 +32,6 @@ public interface ProductMapper {
     List<Product> queryProductList(String name, Integer status);
 
     int deleteProductsByIds(List<Long> ids);
+
+    int countAllProducts();
 }

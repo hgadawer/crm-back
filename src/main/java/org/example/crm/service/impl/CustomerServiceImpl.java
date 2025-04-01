@@ -40,7 +40,8 @@ public class CustomerServiceImpl implements CustomerService {
         // 构造 Pageable 对象（注意：PageRequest 的页码从0开始，所以 pageNum - 1）
         PageRequest pageable = PageRequest.of(pageNum - 1, pageSize);
         // 返回 PageImpl 对象
-        return new PageImpl<>(pageList, pageable, total);    }
+        return new PageImpl<>(pageList, pageable, total);
+    }
 
     @Override
     public Customer queryCustomerInfo(Long id) {

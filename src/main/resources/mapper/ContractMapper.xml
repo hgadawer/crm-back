@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.crm.mapper.ContractMapper">
+
+    <resultMap id="BaseResultMap" type="org.example.crm.entity.Contract">
+            <id property="id" column="id" />
+            <result property="name" column="name" />
+            <result property="customerId" column="customer_id" />
+            <result property="signDate" column="sign_date" />
+            <result property="expireDate" column="expire_date" />
+            <result property="amount" column="amount" />
+            <result property="description" column="description" />
+            <result property="remarks" column="remarks" />
+            <result property="status" column="status" />
+            <result property="creator" column="creator" />
+            <result property="created" column="created" />
+            <result property="updated" column="updated" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,customer_id,sign_date,expire_date,amount,
+        description,remarks,status,creator,created,
+        updated
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from contract
+        where  id = #{id} 
+    </select>
+    <select id="queryContractList" resultType="org.example.crm.entity.Contract">
+        SELECT
+        id,
+        name,
+        customer_id AS customerId,
+        sign_date AS signDate,
+        expire_date AS expireDate,
+        amount,
+        description,
+        remarks,
+        status,
+        creator,
+        created,
+        updated
+        FROM contract
+        <where>
+            <if test="name != null and name != ''">
+                AND name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="customerId != null">
+                AND customer_id = #{customerId}
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+            <if test="startDate != null and startDate != ''">
+                AND sign_date &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND sign_date &lt;= #{endDate}
+            </if>
+        </where>
+        <if test="sortField != null and sortField != ''">
+            ORDER BY ${sortField} ${sortOrder}
+        </if>
+    </select>
+    <select id="countAllContracts" resultType="java.lang.Integer">
+        select count(id)
+        from contract
+    </select>
+    <select id="sumContractAmount" resultType="java.math.BigDecimal">
+        select sum(amount)
+        from contract
+        where status = 1
+    </select>
+    <select id="queryAmountByDate" resultType="java.math.BigDecimal">
+        SELECT amount FROM contract
+        WHERE DATE(sign_date) = STR_TO_DATE(#{today}, '%Y-%m-%d')
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from contract
+        where  id = #{id} 
+    </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="org.example.crm.entity.Contract" useGeneratedKeys="true">
+        insert into contract
+        ( id,name,customer_id,sign_date,expire_date,amount,
+        description,remarks,status,creator,created,
+        updated)
+        values (#{id},#{name},#{customerId},#{signDate},#{expireDate},#{amount},
+        #{description},#{remarks},#{status},#{creator},#{created},
+        #{updated})
+    </insert>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="org.example.crm.entity.Contract" useGeneratedKeys="true">
+        insert into contract
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="id != null">id,</if>
+                <if test="name != null">name,</if>
+                <if test="customerId != null">customer_id,</if>
+                <if test="signDate != null">sign_date,</if>
+                <if test="expireDate != null">expire_date,</if>
+                <if test="amount != null">amount,</if>
+                <if test="description != null">description,</if>
+                <if test="remarks != null">remarks,</if>
+                <if test="status != null">status,</if>
+                <if test="creator != null">creator,</if>
+                <if test="created != null">created,</if>
+                <if test="updated != null">updated,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="id != null">#{id},</if>
+                <if test="name != null">#{name},</if>
+                <if test="customerId != null">#{customerId},</if>
+                <if test="signDate != null">#{signDate},</if>
+                <if test="expireDate != null">#{expireDate},</if>
+                <if test="amount != null">#{amount},</if>
+                <if test="description != null">#{description},</if>
+                <if test="remarks != null">#{remarks},</if>
+                <if test="status != null">#{status},</if>
+                <if test="creator != null">#{creator},</if>
+                <if test="created != null">#{created},</if>
+                <if test="updated != null">#{updated},</if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="org.example.crm.entity.Contract">
+        update contract
+        <set>
+                <if test="name != null">
+                    name = #{name},
+                </if>
+                <if test="customerId != null">
+                    customer_id = #{customerId},
+                </if>
+                <if test="signDate != null">
+                    sign_date = #{signDate},
+                </if>
+                <if test="expireDate != null">
+                    expire_date = #{expireDate},
+                </if>
+                <if test="amount != null">
+                    amount = #{amount},
+                </if>
+                <if test="description != null">
+                    description = #{description},
+                </if>
+                <if test="remarks != null">
+                    remarks = #{remarks},
+                </if>
+                <if test="status != null">
+                    status = #{status},
+                </if>
+                <if test="creator != null">
+                    creator = #{creator},
+                </if>
+                <if test="created != null">
+                    created = #{created},
+                </if>
+                <if test="updated != null">
+                    updated = #{updated},
+                </if>
+        </set>
+        where   id = #{id} 
+    </update>
+    <update id="updateByPrimaryKey" parameterType="org.example.crm.entity.Contract">
+        update contract
+        set 
+            name =  #{name},
+            customer_id =  #{customerId},
+            sign_date =  #{signDate},
+            expire_date =  #{expireDate},
+            amount =  #{amount},
+            description =  #{description},
+            remarks =  #{remarks},
+            status =  #{status},
+            creator =  #{creator},
+            created =  #{created},
+            updated =  #{updated}
+        where   id = #{id} 
+    </update>
+</mapper>

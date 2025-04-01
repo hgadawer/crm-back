@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.crm.mapper.RoleMapper">
+
+    <resultMap id="BaseResultMap" type="org.example.crm.entity.Role">
+            <id property="id" column="id" />
+            <result property="roleName" column="role_name" />
+            <result property="description" column="description" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,role_name,description
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from role
+        where  id = #{id} 
+    </select>
+    <select id="selectByUserId" resultType="org.example.crm.entity.Role">
+        select
+            r.*
+        from role r
+                 left join user_role ur on r.id = ur.role_id
+                 left join user u on ur.user_id = u.id
+        where
+            u.id = #{id}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from role
+        where  id = #{id} 
+    </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="org.example.crm.entity.Role" useGeneratedKeys="true">
+        insert into role
+        ( id,role_name,description)
+        values (#{id},#{roleName},#{description})
+    </insert>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="org.example.crm.entity.Role" useGeneratedKeys="true">
+        insert into role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="id != null">id,</if>
+                <if test="roleName != null">role_name,</if>
+                <if test="description != null">description,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="id != null">#{id},</if>
+                <if test="roleName != null">#{roleName},</if>
+                <if test="description != null">#{description},</if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="org.example.crm.entity.Role">
+        update role
+        <set>
+                <if test="roleName != null">
+                    role_name = #{roleName},
+                </if>
+                <if test="description != null">
+                    description = #{description},
+                </if>
+        </set>
+        where   id = #{id} 
+    </update>
+    <update id="updateByPrimaryKey" parameterType="org.example.crm.entity.Role">
+        update role
+        set 
+            role_name =  #{roleName},
+            description =  #{description}
+        where   id = #{id} 
+    </update>
+</mapper>
