@@ -27,4 +27,8 @@ public interface RoleMapper {
     int updateByPrimaryKey(Role record);
 
     List<Role> selectByUserId(Long id);
+
+    Integer selectVersionByUserId(Long uid);
+
+    int updateSubscribe(Long uid);
 }

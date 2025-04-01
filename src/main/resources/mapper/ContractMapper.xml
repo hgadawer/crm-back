@@ -80,7 +80,7 @@
     </select>
     <select id="queryAmountByDate" resultType="java.math.BigDecimal">
         SELECT amount FROM contract
-        WHERE DATE(sign_date) = STR_TO_DATE(#{today}, '%Y-%m-%d') AND creator = #{uid}
+        WHERE DATE(sign_date) = STR_TO_DATE(#{today}, '%Y-%m-%d') AND creator = #{uid} AND status = 1
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">

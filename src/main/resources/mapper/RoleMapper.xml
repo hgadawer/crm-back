@@ -29,6 +29,11 @@
         where
             u.id = #{id}
     </select>
+    <select id="selectVersionByUserId" resultType="java.lang.Integer">
+        select us.role_id
+        from user_role us
+        where us.user_id = #{uid}
+    </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
         delete from role
@@ -70,5 +75,11 @@
             role_name =  #{roleName},
             description =  #{description}
         where   id = #{id} 
+    </update>
+    <update id="updateSubscribe">
+        update user_role
+        set
+            role_id = 2
+        where user_id = #{uid}
     </update>
 </mapper>
