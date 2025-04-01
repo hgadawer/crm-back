@@ -27,7 +27,7 @@ public interface BusinessMapper {
 
     int updateByPrimaryKey(Business record);
 
-    List<Business> queryBusinessList(String name);
+    List<Business> queryBusinessList(String name, Long uid);
 
     int deleteByIds(@Param("ids") List<Long> ids);
     Business findByName(String name);

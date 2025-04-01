@@ -28,11 +28,11 @@ public interface ContractMapper {
 
     int updateByPrimaryKey(Contract record);
 
-    List<Contract> queryContractList(String name, Integer customerId, Integer status, String startDate, String endDate, String sortField, String sortOrder);
+    List<Contract> queryContractList(String name, Integer customerId, Integer status, String startDate, String endDate, String sortField, String sortOrder, Long uid);
 
-    int countAllContracts();
+    int countAllContracts(Long uid);
 
-    BigDecimal sumContractAmount();
+    BigDecimal sumContractAmount(Long uid);
 
-    BigDecimal queryAmountByDate(Date today);
+    BigDecimal queryAmountByDate(Date today, Long uid);
 }

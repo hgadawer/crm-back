@@ -20,6 +20,10 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    //获取当前使用系统的用户ID
+    private Long getCurrentId(HttpServletRequest request){
+        return Long.valueOf(request.getHeader("uid"));
+    }
     /**
      * 获取产品列表
      */
@@ -28,9 +32,10 @@ public class ProductController {
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "status", required = false) Integer status,
             @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
-            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+            HttpServletRequest request) {
         try {
-            Page<Product> page = productService.getProductList(name, status, pageNum, pageSize);
+            Page<Product> page = productService.getProductList(name, status,getCurrentId(request), pageNum, pageSize);
             // 封装返回数据：total 和 list
             Map<String, Object> result = new HashMap<>();
             result.put("total", page.getTotalElements());
@@ -97,10 +102,10 @@ public class ProductController {
     }
 
     @GetMapping("/export")
-    public R exportProducts(){
+    public R exportProducts(HttpServletRequest request){
         try {
             // 获取Excel文件字节数组
-            byte[] excelBytes = productService.exportCustomersToExcel();
+            byte[] excelBytes = productService.exportCustomersToExcel(getCurrentId(request));
 
             // 将字节数组转换为Base64字符串
             String base64Data = Base64.getEncoder().encodeToString(excelBytes);

@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.example.crm.DTO.ContractStatusDTO;
 import org.example.crm.DTO.ExcelResponse;
 import org.example.crm.entity.Contract;
-import org.example.crm.entity.Customer;
 import org.example.crm.result.R;
 import org.example.crm.service.ContractService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +20,11 @@ public class ContractController {
     @Autowired
     ContractService contractService;
 
+    //获取当前使用系统的用户ID
+    private Long getCurrentId(HttpServletRequest request){
+        return Long.valueOf(request.getHeader("uid"));
+    }
+
     @GetMapping("/list")
     public R getList(
             @RequestParam(defaultValue = "1") Integer pageNum,
@@ -31,10 +35,11 @@ public class ContractController {
             @RequestParam(required = false) String startDate,
             @RequestParam(required = false) String endDate,
             @RequestParam(required = false) String sortField,
-            @RequestParam(required = false) String sortOrder
+            @RequestParam(required = false) String sortOrder,
+            HttpServletRequest request
     ){
         // 获取分页查询结果
-        Page<Contract> page = contractService.getContractList(name,customerId,status,startDate,endDate,sortField,sortOrder, pageNum, pageSize);
+        Page<Contract> page = contractService.getContractList(name,customerId,status,startDate,endDate,sortField,sortOrder,getCurrentId(request), pageNum, pageSize);
         // 封装返回数据：total 和 list
         Map<String, Object> result = new HashMap<>();
         result.put("total", page.getTotalElements());
@@ -110,10 +115,10 @@ public class ContractController {
         }
     }
     @GetMapping("/export")
-    public R exportCustomers(){
+    public R exportCustomers(HttpServletRequest request){
         try {
             // 获取Excel文件字节数组
-            byte[] excelBytes = contractService.exportContractsToExcel();
+            byte[] excelBytes = contractService.exportContractsToExcel(getCurrentId(request));
 
             // 将字节数组转换为Base64字符串
             String base64Data = Base64.getEncoder().encodeToString(excelBytes);

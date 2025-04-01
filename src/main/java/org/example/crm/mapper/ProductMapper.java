@@ -29,9 +29,9 @@ public interface ProductMapper {
 
     Product findByName(String name);
 
-    List<Product> queryProductList(String name, Integer status);
+    List<Product> queryProductList(String name, Integer status, Long uid);
 
     int deleteProductsByIds(List<Long> ids);
 
-    int countAllProducts();
+    int countAllProducts(Long uid);
 }

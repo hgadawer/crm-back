@@ -1,7 +1,9 @@
 package org.example.crm.service.impl;
 
 import org.apache.poi.xssf.usermodel.*;
+import org.example.crm.entity.Notice;
 import org.example.crm.entity.Product;
+import org.example.crm.mapper.NoticeMapper;
 import org.example.crm.mapper.ProductMapper;
 import org.example.crm.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +22,13 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
     @Autowired
     ProductMapper productMapper;
+    @Autowired
+    NoticeMapper noticeMapper;
 
     @Override
-    public Page<Product> getProductList(String name, Integer status, int pageNum, int pageSize) {
+    public Page<Product> getProductList(String name, Integer status,Long uid, int pageNum, int pageSize) {
         // 调用 Mapper 查询全部满足条件的客户数据
-        List<Product> fullList = productMapper.queryProductList(name, status);
+        List<Product> fullList = productMapper.queryProductList(name, status,uid);
         int total = fullList.size();
 
         // 计算分页的起始和结束索引（页码从1开始）
@@ -54,6 +58,16 @@ public class ProductServiceImpl implements ProductService {
         product.setUpdated(now);
         // 插入客户数据
         int rows = productMapper.insertSelective(product);
+        if (rows > 0) {
+            //产生通知
+            Notice notice = new Notice();
+            notice.setCreator(product.getCreator());
+            notice.setContent("你创建了新产品"+product.getName());
+            notice.setCreated(now);
+            notice.setUpdated(now);
+            notice.setStatus(2);
+            noticeMapper.insertSelective(notice);
+        }
         return rows > 0;
     }
 
@@ -77,12 +91,22 @@ public class ProductServiceImpl implements ProductService {
         Date now = new Date();
         product.setUpdated(now);
         int rows = productMapper.updateByPrimaryKeySelective(product);
+        if (rows > 0) {
+            //产生通知
+            Notice notice = new Notice();
+            notice.setCreator(product.getCreator());
+            notice.setContent("你更新了产品"+product.getName());
+            notice.setCreated(now);
+            notice.setUpdated(now);
+            notice.setStatus(2);
+            noticeMapper.insertSelective(notice);
+        }
         return rows > 0;
     }
 
     @Override
-    public byte[] exportCustomersToExcel() throws IOException {
-        List<Product> products = productMapper.queryProductList(null, null);
+    public byte[] exportCustomersToExcel(Long uid) throws IOException {
+        List<Product> products = productMapper.queryProductList(null, null,uid);
 
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             XSSFSheet sheet = workbook.createSheet("客户信息");

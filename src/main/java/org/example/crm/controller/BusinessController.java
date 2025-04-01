@@ -18,6 +18,10 @@ import java.util.Map;
 public class BusinessController {
     @Autowired
     private BusinessService businessService;
+    //获取当前使用系统的用户ID
+    private Long getCurrentId(HttpServletRequest request){
+        return Long.valueOf(request.getHeader("uid"));
+    }
 
     /**
      * 新建业务
@@ -31,9 +35,7 @@ public class BusinessController {
         try{
             //测试
             System.out.println(business.getProductlist());
-            //从请求头中获取当前登录人的id，就是这个人创建的这个客户，存入creator字段里
-            Long uid = Long.valueOf(request.getHeader("uid"));
-            business.setCreator(uid);
+            business.setCreator(getCurrentId(request));
             boolean success = businessService.createBusiness(business);
 
             if(success){
@@ -50,10 +52,11 @@ public class BusinessController {
     public R listBusiness(
             @RequestParam(required = false) String name,
             @RequestParam(defaultValue = "1") int pageNum,
-            @RequestParam(defaultValue = "10") int pageSize
+            @RequestParam(defaultValue = "10") int pageSize,
+            HttpServletRequest request
     ){
         // 获取分页查询结果
-        Page<Business> page = businessService.getBusinessList(name,pageNum, pageSize);
+        Page<Business> page = businessService.getBusinessList(name,getCurrentId(request),pageNum, pageSize);
         // 封装返回数据：total 和 list
         Map<String, Object> result = new HashMap<>();
         result.put("total", page.getTotalElements());

@@ -47,6 +47,7 @@
         updated
         FROM contract
         <where>
+            creator = #{uid}
             <if test="name != null and name != ''">
                 AND name LIKE CONCAT('%', #{name}, '%')
             </if>
@@ -70,15 +71,16 @@
     <select id="countAllContracts" resultType="java.lang.Integer">
         select count(id)
         from contract
+        where creator = #{uid}
     </select>
     <select id="sumContractAmount" resultType="java.math.BigDecimal">
         select sum(amount)
         from contract
-        where status = 1
+        where status = 1 and creator=#{uid}
     </select>
     <select id="queryAmountByDate" resultType="java.math.BigDecimal">
         SELECT amount FROM contract
-        WHERE DATE(sign_date) = STR_TO_DATE(#{today}, '%Y-%m-%d')
+        WHERE DATE(sign_date) = STR_TO_DATE(#{today}, '%Y-%m-%d') AND creator = #{uid}
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">

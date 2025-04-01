@@ -3,9 +3,10 @@ package org.example.crm.service.impl;
 import org.apache.poi.xssf.usermodel.*;
 import org.example.crm.DTO.ContractStatusDTO;
 import org.example.crm.entity.Contract;
-import org.example.crm.entity.Customer;
+import org.example.crm.entity.Notice;
 import org.example.crm.mapper.ContractMapper;
 import org.example.crm.mapper.CustomerMapper;
+import org.example.crm.mapper.NoticeMapper;
 import org.example.crm.service.ContractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,10 +27,12 @@ public class ContractServiceImpl implements ContractService {
 
     @Autowired
     CustomerMapper customerMapper;
+    @Autowired
+    NoticeMapper noticeMapper;
     @Override
-    public Page<Contract> getContractList(String name, Integer customerId, Integer status, String startDate, String endDate, String sortField, String sortOrder, Integer pageNum, Integer pageSize) {
+    public Page<Contract> getContractList(String name, Integer customerId, Integer status, String startDate, String endDate, String sortField, String sortOrder,Long uid, Integer pageNum, Integer pageSize) {
         // 调用 Mapper 查询全部满足条件的客户数据
-        List<Contract> fullList = contractMapper.queryContractList(name, customerId, status, startDate, endDate, sortField, sortOrder);
+        List<Contract> fullList = contractMapper.queryContractList(name, customerId, status, startDate, endDate, sortField, sortOrder,uid);
         for (Contract contract:fullList){
             contract.setCustomerName(customerMapper.selectByPrimaryKey(contract.getCustomerId()).getName());
         }
@@ -62,6 +65,15 @@ public class ContractServiceImpl implements ContractService {
         contract.setUpdated(now);
         // 插入客户数据
         int rows = contractMapper.insertSelective(contract);
+
+        //产生通知
+        Notice notice = new Notice();
+        notice.setCreator(contract.getCreator());
+        notice.setContent("你创建了新合同: "+contract.getName());
+        notice.setCreated(now);
+        notice.setUpdated(now);
+        notice.setStatus(2);
+        noticeMapper.insertSelective(notice);
         return rows > 0;
     }
 
@@ -71,11 +83,23 @@ public class ContractServiceImpl implements ContractService {
         Date now = new Date();
         contract.setUpdated(now);
         int rows = contractMapper.updateByPrimaryKeySelective(contract);
+        if (rows > 0) {
+            Contract temp = contractMapper.selectByPrimaryKey(contract.getId());
+            //产生通知
+            Notice notice = new Notice();
+            notice.setCreator(temp.getCreator());
+            notice.setContent("你更新了合同: "+temp.getName());
+            notice.setCreated(now);
+            notice.setUpdated(now);
+            notice.setStatus(2);
+            noticeMapper.insertSelective(notice);
+        }
         return rows > 0;
     }
 
     @Override
     public boolean deleteContract(Long id) {
+
         return contractMapper.deleteByPrimaryKey(id) > 0;
     }
 
@@ -89,8 +113,8 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public byte[] exportContractsToExcel() throws IOException {
-        List<Contract> contracts = contractMapper.queryContractList(null,null,null,null,null,null,null);
+    public byte[] exportContractsToExcel(Long uid) throws IOException {
+        List<Contract> contracts = contractMapper.queryContractList(null,null,null,null,null,null,null, uid);
 
         for (Contract contract:contracts){
             contract.setCustomerName(customerMapper.selectByPrimaryKey(contract.getCustomerId()).getName());

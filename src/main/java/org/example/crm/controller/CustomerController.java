@@ -19,6 +19,10 @@ public class CustomerController {
 
     @Autowired
     CustomerService customerService;
+    //获取当前使用系统的用户ID
+    private Long getCurrentId(HttpServletRequest request){
+        return Long.valueOf(request.getHeader("uid"));
+    }
 
 
     /**
@@ -32,9 +36,10 @@ public class CustomerController {
                                @RequestParam(required = false) String level,
                                @RequestParam(required = false) String status,
                                @RequestParam(defaultValue = "1") int pageNum,
-                               @RequestParam(defaultValue = "10") int pageSize){
+                               @RequestParam(defaultValue = "10") int pageSize,
+                               HttpServletRequest request){
         // 获取分页查询结果
-        Page<Customer> page = customerService.getCustomerList(name, source, industry, level, status, pageNum, pageSize);
+        Page<Customer> page = customerService.getCustomerList(name, getCurrentId(request),source, industry, level, status, pageNum, pageSize);
         // 封装返回数据：total 和 list
         Map<String, Object> result = new HashMap<>();
         result.put("total", page.getTotalElements());
@@ -56,8 +61,8 @@ public class CustomerController {
     }
 
     @GetMapping("/all")
-    public R queryAllCustomerIdsAndNames(){
-        List<CustomerIdAndName> customerIdAndNameList =  customerService.getAllCustomerIdsAndNames();
+    public R queryAllCustomerIdsAndNames(HttpServletRequest request){
+        List<CustomerIdAndName> customerIdAndNameList =  customerService.getAllCustomerIdsAndNames(getCurrentId(request));
         return R.OK(customerIdAndNameList);
     }
 
@@ -124,10 +129,10 @@ public class CustomerController {
     }
 
     @GetMapping("/export")
-    public R exportCustomers(){
+    public R exportCustomers(HttpServletRequest request){
         try {
             // 获取Excel文件字节数组
-            byte[] excelBytes = customerService.exportCustomersToExcel();
+            byte[] excelBytes = customerService.exportCustomersToExcel(getCurrentId(request));
 
             // 将字节数组转换为Base64字符串
             String base64Data = Base64.getEncoder().encodeToString(excelBytes);

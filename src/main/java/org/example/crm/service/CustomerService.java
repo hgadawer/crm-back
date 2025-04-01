@@ -19,7 +19,7 @@ public interface CustomerService {
      * @param pageSize 每页显示数量
      * @return 包含总记录数 total 和客户列表 list 的 Map
      */
-    Page<Customer> getCustomerList(String name, String source, String industry, String level, String status, int pageNum, int pageSize);
+    Page<Customer> getCustomerList(String name, Long uid,String source, String industry, String level, String status, int pageNum, int pageSize);
 
     /**
      * 根据客户id获取对应客户的信息
@@ -42,7 +42,7 @@ public interface CustomerService {
      */
     boolean deleteCustomers(List<Long> ids);
 
-    byte[] exportCustomersToExcel() throws IOException;
+    byte[] exportCustomersToExcel(Long uid) throws IOException;
 
-    List<CustomerIdAndName> getAllCustomerIdsAndNames();
+    List<CustomerIdAndName> getAllCustomerIdsAndNames(Long uid);
 }

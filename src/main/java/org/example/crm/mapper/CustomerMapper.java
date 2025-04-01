@@ -6,7 +6,6 @@ import org.apache.ibatis.annotations.Param;
 import org.example.crm.DTO.CustomerIdAndName;
 import org.example.crm.entity.Customer;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +32,7 @@ public interface CustomerMapper {
 
     List<Customer> queryCustomerList(
             @Param("name") String name,
-            @Param("source") String source,
+            Long uid, @Param("source") String source,
             @Param("industry") String industry,
             @Param("level") String level,
             @Param("status") String status
@@ -43,10 +42,10 @@ public interface CustomerMapper {
 
     int deleteByIds(@Param("ids") List<Long> ids);
 
-    List<CustomerIdAndName> selectAllCustomerIdsAndNames();
+    List<CustomerIdAndName> selectAllCustomerIdsAndNames(Long uid);
 
-    int countAllCustomers();
+    int countAllCustomers(Long uid);
 
 
-    List<Map<String, Object>> getCustomerIndustryDistribution();
+    List<Map<String, Object>> getCustomerIndustryDistribution(Long uid);
 }

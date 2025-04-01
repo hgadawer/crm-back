@@ -34,7 +34,7 @@
     <select id="queryBusinessList" resultType="org.example.crm.entity.Business">
         SELECT *
         FROM business
-        WHERE 1=1
+        WHERE creator = #{uid}
         <if test="name != null and name != ''">
             AND name LIKE CONCAT('%', #{name}, '%')
         </if>

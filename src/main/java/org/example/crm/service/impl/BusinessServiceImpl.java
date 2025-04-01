@@ -3,8 +3,10 @@ package org.example.crm.service.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.crm.entity.Business;
+import org.example.crm.entity.Notice;
 import org.example.crm.mapper.BusinessMapper;
 import org.example.crm.mapper.CustomerMapper;
+import org.example.crm.mapper.NoticeMapper;
 import org.example.crm.service.BusinessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,9 +25,11 @@ public class BusinessServiceImpl implements BusinessService {
     BusinessMapper businessMapper;
     @Autowired
     CustomerMapper customerMapper;
+    @Autowired
+    NoticeMapper noticeMapper;
+
     @Override
     public boolean createBusiness(Business business) throws JsonProcessingException {
-
 
         Business existing= businessMapper.findByName(business.getName());
         if(existing!=null){
@@ -39,13 +43,22 @@ public class BusinessServiceImpl implements BusinessService {
         String jsonStr = objectMapper.writeValueAsString(business.getProductlist());
         business.setProductlist(jsonStr);
 
+        //产生通知
+        Notice notice = new Notice();
+        notice.setCreator(business.getCreator());
+        notice.setContent("你创建了新业务: "+business.getName());
+        notice.setCreated(now);
+        notice.setUpdated(now);
+        notice.setStatus(2);
+        noticeMapper.insertSelective(notice);
+
         return businessMapper.insertSelective(business)==1;
     }
 
     @Override
-    public Page<Business> getBusinessList(String name, int pageNum, int pageSize) {
+    public Page<Business> getBusinessList(String name, Long uid, int pageNum, int pageSize) {
         // 调用 Mapper 查询全部满足条件的客户数据
-        List<Business> fullList = businessMapper.queryBusinessList(name);
+        List<Business> fullList = businessMapper.queryBusinessList(name,uid);
 
         for(Business business : fullList) {
             business.setCname(customerMapper.selectByPrimaryKey(business.getCid()).getName());
@@ -93,6 +106,16 @@ public class BusinessServiceImpl implements BusinessService {
         String jsonStr = objectMapper.writeValueAsString(business.getProductlist());
         business.setProductlist(jsonStr);
         int rows = businessMapper.updateByPrimaryKeySelective(business);
+        Business temp = businessMapper.selectByPrimaryKey(business.getId());
+        //产生通知
+        Notice notice = new Notice();
+        notice.setCreator(temp.getCreator());
+        notice.setContent("你更新了业务: "+temp.getName());
+        notice.setCreated(now);
+        notice.setUpdated(now);
+        notice.setStatus(2);
+        noticeMapper.insertSelective(notice);
+
         return rows > 0;
     }
 }

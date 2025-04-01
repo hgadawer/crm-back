@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ProductService {
 
-    Page<Product> getProductList(String name, Integer status, int pageNum, int pageSize);
+    Page<Product> getProductList(String name, Integer status,Long uid, int pageNum, int pageSize);
 
     boolean createProduct(Product product);
 
@@ -18,5 +18,5 @@ public interface ProductService {
 
     boolean updateProduct(Product product);
 
-    byte[] exportCustomersToExcel() throws IOException;
+    byte[] exportCustomersToExcel(Long uid) throws IOException;
 }

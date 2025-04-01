@@ -36,7 +36,7 @@
     <select id="queryCustomerList" resultType="org.example.crm.entity.Customer">
         SELECT *
         FROM customer
-        WHERE 1=1
+        WHERE creator = #{uid}
         <if test="name != null and name != ''">
             AND name LIKE CONCAT('%', #{name}, '%')
         </if>
@@ -59,15 +59,17 @@
     </select>
     <select id="selectAllCustomerIdsAndNames" resultType="org.example.crm.DTO.CustomerIdAndName">
         select id,name from customer
-        where 1 = 1
+        where creator = #{uid}
     </select>
     <select id="countAllCustomers" resultType="java.lang.Integer">
         select count(id)
         from customer
+        where creator = #{uid}
     </select>
     <select id="getCustomerIndustryDistribution" resultType="map">
         SELECT industry AS name, COUNT(*) AS value
         FROM customer
+        where creator = #{uid}
         GROUP BY industry
     </select>
 

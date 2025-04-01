@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public interface ContractService {
 
-    Page<Contract> getContractList(String name, Integer customerId, Integer status, String startDate, String endDate, String sortField, String sortOrder, Integer pageNum, Integer pageSize);
+    Page<Contract> getContractList(String name, Integer customerId, Integer status, String startDate, String endDate, String sortField, String sortOrder, Long uid,Integer pageNum, Integer pageSize);
 
     Contract queryContractInfo(Long id);
 
@@ -20,5 +20,5 @@ public interface ContractService {
 
     boolean updateStatus(ContractStatusDTO contractStatusDTO);
 
-    byte[] exportContractsToExcel() throws IOException;
+    byte[] exportContractsToExcel(Long uid) throws IOException;
 }

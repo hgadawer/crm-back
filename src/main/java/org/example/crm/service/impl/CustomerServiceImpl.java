@@ -3,7 +3,9 @@ package org.example.crm.service.impl;
 import org.apache.poi.xssf.usermodel.*;
 import org.example.crm.DTO.CustomerIdAndName;
 import org.example.crm.entity.Customer;
+import org.example.crm.entity.Notice;
 import org.example.crm.mapper.CustomerMapper;
+import org.example.crm.mapper.NoticeMapper;
 import org.example.crm.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,10 +24,13 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     CustomerMapper customerMapper;
 
+    @Autowired
+    NoticeMapper noticeMapper;
+
     @Override
-    public Page<Customer> getCustomerList(String name, String source, String industry, String level, String status, int pageNum, int pageSize) {
+    public Page<Customer> getCustomerList(String name, Long uid,String source, String industry, String level, String status, int pageNum, int pageSize) {
         // 调用 Mapper 查询全部满足条件的客户数据
-        List<Customer> fullList = customerMapper.queryCustomerList(name, source, industry, level, status);
+        List<Customer> fullList = customerMapper.queryCustomerList(name, uid,source, industry, level, status);
         int total = fullList.size();
 
         // 计算分页的起始和结束索引（页码从1开始）
@@ -61,6 +66,16 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setUpdated(now);
         // 插入客户数据
         int rows = customerMapper.insertSelective(customer);
+        if(rows>0){
+            //产生通知
+            Notice notice = new Notice();
+            notice.setCreator(customer.getCreator());
+            notice.setContent("你创建了新客户: "+customer.getName());
+            notice.setCreated(now);
+            notice.setUpdated(now);
+            notice.setStatus(2);
+            noticeMapper.insertSelective(notice);
+        }
         return rows > 0;
     }
 
@@ -70,6 +85,18 @@ public class CustomerServiceImpl implements CustomerService {
         Date now = new Date();
         customer.setUpdated(now);
         int rows = customerMapper.updateByPrimaryKeySelective(customer);
+
+        if(rows > 0){
+            Customer temp = customerMapper.selectByPrimaryKey(customer.getId());
+            //产生通知
+            Notice notice = new Notice();
+            notice.setCreator(temp.getCreator());
+            notice.setContent("你更新了客户: "+temp.getName());
+            notice.setCreated(now);
+            notice.setUpdated(now);
+            notice.setStatus(2);
+            noticeMapper.insertSelective(notice);
+        }
         return rows > 0;
     }
 
@@ -83,8 +110,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public byte[] exportCustomersToExcel() throws IOException {
-        List<Customer> customers = customerMapper.queryCustomerList(null,null,null,null,null);
+    public byte[] exportCustomersToExcel(Long uid) throws IOException {
+        List<Customer> customers = customerMapper.queryCustomerList(null, uid, null,null,null,null);
 
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             XSSFSheet sheet = workbook.createSheet("客户信息");
@@ -124,8 +151,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<CustomerIdAndName> getAllCustomerIdsAndNames() {
+    public List<CustomerIdAndName> getAllCustomerIdsAndNames(Long uid) {
 
-        return  customerMapper.selectAllCustomerIdsAndNames();
+        return  customerMapper.selectAllCustomerIdsAndNames(uid);
     }
 }

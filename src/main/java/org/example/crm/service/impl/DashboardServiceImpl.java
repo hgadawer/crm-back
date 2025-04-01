@@ -25,14 +25,14 @@ public class DashboardServiceImpl implements DashboardService {
     private ProductMapper productMapper;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     @Override
-    public Map<String, Object> getSumData(Integer daysRange) {
+    public Map<String, Object> getSumData(Integer daysRange,Long uid) {
         Map<String, Object> result = new HashMap<>();
         // 1. 获取基础统计数据
-        int customerCount = customerMapper.countAllCustomers();
+        int customerCount = customerMapper.countAllCustomers(uid);
 
-        int contractCount = contractMapper.countAllContracts();
-        int productCount = productMapper.countAllProducts();
-        BigDecimal contractAmount = contractMapper.sumContractAmount();
+        int contractCount = contractMapper.countAllContracts(uid);
+        int productCount = productMapper.countAllProducts(uid);
+        BigDecimal contractAmount = contractMapper.sumContractAmount(uid);
         result.put("customers", customerCount);
         result.put("contracts", contractCount);
         result.put("contractAmount", contractAmount);
@@ -43,13 +43,13 @@ public class DashboardServiceImpl implements DashboardService {
         for (int i = 0; i < daysRange; i++) {
             dates.add(today);
             Date temp = Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant());
-            amount.add(contractMapper.queryAmountByDate(temp));
+            amount.add(contractMapper.queryAmountByDate(temp,uid));
             today = today.plusDays(1);
         }
         result.put("date",dates);
         result.put("amount",amount);
 
-        List<Map<String, Object>> customerIndustry = customerMapper.getCustomerIndustryDistribution();
+        List<Map<String, Object>> customerIndustry = customerMapper.getCustomerIndustryDistribution(uid);
         result.put("customerIndustry",customerIndustry);
 
         return result;

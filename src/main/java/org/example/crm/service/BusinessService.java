@@ -11,7 +11,7 @@ import java.util.List;
 public interface BusinessService {
     boolean createBusiness(Business business) throws JsonProcessingException;
 
-    Page<Business> getBusinessList(String name, int pageNum, int pageSize);
+    Page<Business> getBusinessList(String name, Long uid, int pageNum, int pageSize);
 
     boolean deleteBusinesses(List<Long> ids);
 
