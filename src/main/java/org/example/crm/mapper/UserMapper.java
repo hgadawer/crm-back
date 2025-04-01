@@ -1,6 +1,7 @@
 package org.example.crm.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.example.crm.entity.User;
 
 /**
@@ -25,4 +26,8 @@ public interface UserMapper {
     int updateByPrimaryKey(User record);
 
     User selectByEmail(String email);
+
+    void updatePasswordByEmail(@Param("email") String email, @Param("password") String password);
+
+
 }

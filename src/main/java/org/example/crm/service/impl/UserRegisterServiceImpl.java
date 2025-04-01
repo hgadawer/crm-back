@@ -1,7 +1,8 @@
 package org.example.crm.service.impl;
 
+import org.example.crm.DTO.UserInfoDTO;
 import org.example.crm.entity.User;
-import org.example.crm.mapper.UserMapper;
+import org.example.crm.mapper.*;
 import org.example.crm.result.R;
 import org.example.crm.service.UserRegisterService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,8 @@ public class UserRegisterServiceImpl implements UserRegisterService {
     private JavaMailSender mailSender;
     @Autowired
     private PasswordEncoder passwordEncoder; // 注入 BCryptPasswordEncoder
+    @Autowired
+    RoleMapper roleMapper;
     @Override
     public R register(String email, String password, String code) {
         // 检查用户是否已存在
@@ -80,6 +83,30 @@ public class UserRegisterServiceImpl implements UserRegisterService {
         } catch (Exception e) {
             return R.FAIL("验证码发送失败");
         }
+    }
+
+    @Override
+    public UserInfoDTO getUserInfo(Long uid) {
+        User user = userMapper.selectByPrimaryKey(uid);
+        UserInfoDTO userInfo = new UserInfoDTO();
+        userInfo.setName(user.getName());
+        userInfo.setEmail(user.getUsername());
+        Integer version = roleMapper.selectVersionByUserId(uid);
+        userInfo.setVersion(version);
+        return userInfo;
+    }
+
+    @Override
+    public R updatePassword(String email, String password, String code) {
+        // 验证验证码
+        String cachedCode = redisTemplate.opsForValue().get("VERIFY_CODE_" + email);
+        if (!code.equals(cachedCode)) {
+            return R.builder().code(10005).msg("验证码错误").info(null).build();
+        }
+        userMapper.updatePasswordByEmail(email,passwordEncoder.encode(password));
+        // 删除使用过的验证码
+        redisTemplate.delete("VERIFY_CODE_" + email);
+        return R.OK("更改密码成功");
     }
 
 

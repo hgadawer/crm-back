@@ -61,7 +61,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 3. 配置请求授权规则：开放登录、注册和验证码接口，其余请求需要认证
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register","/user/verifycode").permitAll()
+                        .requestMatchers("/login", "/register","/user/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 // 4. 配置异常处理：未认证、无权限时返回JSON提示

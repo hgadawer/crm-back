@@ -124,4 +124,10 @@
             account_enabled =  #{accountEnabled}
         where   id = #{id} 
     </update>
+    <update id="updatePasswordByEmail">
+        update user
+        set
+            password =  #{password}
+        where email = #{email}
+    </update>
 </mapper>
