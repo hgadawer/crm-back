@@ -1,7 +1,10 @@
 package org.example.crm.service;
 
+import jakarta.mail.MessagingException;
 import org.example.crm.DTO.CustomerIdAndName;
+import org.example.crm.DTO.SendEmailParamDTO;
 import org.example.crm.entity.Customer;
+import org.example.crm.result.R;
 import org.springframework.data.domain.Page;
 
 import java.io.IOException;
@@ -45,4 +48,6 @@ public interface CustomerService {
     byte[] exportCustomersToExcel(Long uid) throws IOException;
 
     List<CustomerIdAndName> getAllCustomerIdsAndNames(Long uid);
+
+    R sendMail(SendEmailParamDTO sendEmailParamDTO, Long uid) throws MessagingException, IOException;
 }

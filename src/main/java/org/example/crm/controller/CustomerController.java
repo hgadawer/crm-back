@@ -1,9 +1,8 @@
 package org.example.crm.controller;
 
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
-import org.example.crm.DTO.CustomerIdAndName;
-import org.example.crm.DTO.DeleteCustomerRequest;
-import org.example.crm.DTO.ExcelResponse;
+import org.example.crm.DTO.*;
 import org.example.crm.entity.Customer;
 import org.example.crm.result.R;
 import org.example.crm.service.CustomerService;
@@ -11,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.*;
 
 @RestController
@@ -143,5 +143,11 @@ public class CustomerController {
         } catch (Exception e) {
             return R.FAIL("导出失败: " + e.getMessage());
         }
+    }
+
+    @PostMapping("/send")
+    public R sendMailToCustomer(@RequestBody SendEmailParamDTO sendEmailParamDTO,HttpServletRequest request) throws MessagingException, IOException {
+        Long uid = getCurrentId(request);
+        return customerService.sendMail(sendEmailParamDTO,uid);
     }
 }
