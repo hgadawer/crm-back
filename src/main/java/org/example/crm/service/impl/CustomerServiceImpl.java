@@ -17,7 +17,6 @@ import org.example.crm.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -42,9 +41,6 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     NoticeMapper noticeMapper;
-
-    @Autowired
-    private JavaMailSender mailSender;
 
     @Autowired
     MailConfigMapper mailConfigMapper;
@@ -200,6 +196,7 @@ public class CustomerServiceImpl implements CustomerService {
                 put("mail.smtp.auth",  "true");
                 put("mail.smtp.starttls.enable",  "true");
                 put("mail.smtp.starttls.required",  "true");
+                put("mail.debug", "true"); // 启用调试日志
 //                put("mail.smtp.ssl.protocols",  "TLSv1.2");
 //                put("mail.smtp.ssl.ciphersuites",
 //                        "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256:TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256");
@@ -207,7 +204,7 @@ public class CustomerServiceImpl implements CustomerService {
             }});
         }};
         //配置接收人信息
-        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessage message = sender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
         helper.setFrom(mailConfig.getEmail());

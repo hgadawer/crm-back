@@ -8,6 +8,7 @@ import org.example.crm.result.R;
 import org.example.crm.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -144,7 +145,7 @@ public class CustomerController {
             return R.FAIL("导出失败: " + e.getMessage());
         }
     }
-
+    @PreAuthorize(value = "hasRole('root')")
     @PostMapping("/send")
     public R sendMailToCustomer(@RequestBody SendEmailParamDTO sendEmailParamDTO,HttpServletRequest request) throws MessagingException, IOException {
         Long uid = getCurrentId(request);
