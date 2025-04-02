@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.crm.mapper.MailConfigMapper">
+
+    <resultMap id="BaseResultMap" type="org.example.crm.entity.MailConfig">
+            <id property="id" column="id" />
+            <result property="stmp" column="stmp" />
+            <result property="port" column="port" />
+            <result property="authCode" column="auth_code" />
+            <result property="email" column="email" />
+            <result property="status" column="status" />
+            <result property="creator" column="creator" />
+            <result property="created" column="created" />
+            <result property="updated" column="updated" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,stmp,port,auth_code,email,status,
+        creator,created,updated
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from mail_config
+        where  id = #{id} 
+    </select>
+    <select id="selectByCreatorId" resultType="org.example.crm.entity.MailConfig">
+        select
+        <include refid="Base_Column_List" />
+        from mail_config
+        where  creator = #{uid}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from mail_config
+        where  id = #{id} 
+    </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="org.example.crm.entity.MailConfig" useGeneratedKeys="true">
+        insert into mail_config
+        ( id,stmp,port,auth_code,email,status,
+        creator,created,updated)
+        values (#{id},#{stmp},#{port},#{authCode},#{email},#{status},
+        #{creator},#{created},#{updated})
+    </insert>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="org.example.crm.entity.MailConfig" useGeneratedKeys="true">
+        insert into mail_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="id != null">id,</if>
+                <if test="stmp != null">stmp,</if>
+                <if test="port != null">port,</if>
+                <if test="authCode != null">auth_code,</if>
+                <if test="email != null">email,</if>
+                <if test="status != null">status,</if>
+                <if test="creator != null">creator,</if>
+                <if test="created != null">created,</if>
+                <if test="updated != null">updated,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="id != null">#{id},</if>
+                <if test="stmp != null">#{stmp},</if>
+                <if test="port != null">#{port},</if>
+                <if test="authCode != null">#{authCode},</if>
+                <if test="email != null">#{email},</if>
+                <if test="status != null">#{status},</if>
+                <if test="creator != null">#{creator},</if>
+                <if test="created != null">#{created},</if>
+                <if test="updated != null">#{updated},</if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="org.example.crm.entity.MailConfig">
+        update mail_config
+        <set>
+                <if test="stmp != null">
+                    stmp = #{stmp},
+                </if>
+                <if test="port != null">
+                    port = #{port},
+                </if>
+                <if test="authCode != null">
+                    auth_code = #{authCode},
+                </if>
+                <if test="email != null">
+                    email = #{email},
+                </if>
+                <if test="status != null">
+                    status = #{status},
+                </if>
+                <if test="creator != null">
+                    creator = #{creator},
+                </if>
+                <if test="created != null">
+                    created = #{created},
+                </if>
+                <if test="updated != null">
+                    updated = #{updated},
+                </if>
+        </set>
+        where   id = #{id} 
+    </update>
+    <update id="updateByPrimaryKey" parameterType="org.example.crm.entity.MailConfig">
+        update mail_config
+        set 
+            stmp =  #{stmp},
+            port =  #{port},
+            auth_code =  #{authCode},
+            email =  #{email},
+            status =  #{status},
+            creator =  #{creator},
+            created =  #{created},
+            updated =  #{updated}
+        where   id = #{id} 
+    </update>
+    <update id="updateStatusById">
+        update mail_config
+        set
+            status = #{status}
+        where id = #{id};
+    </update>
+</mapper>
